@@ -16,7 +16,7 @@
                     colors: {
                         spotify: {
                             green: '#1DB954',
-                            dark: '#191414',
+                            dark: '#222F3E',
                             darkGreen: '#1AA34A',
                         },
                     },
@@ -38,12 +38,12 @@
                     </g>
                 </g>
             </svg>
-            <h1 class="text-3xl md:text-5xl font-light text-center text-spotify-dark">Spotify API</h1>
+            <h1 class="text-3xl md:text-5xl font-semibold text-center text-spotify-dark">Spotify API</h1>
         </div>
         
         <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-6 text-spotify-dark">Track Info</h3>
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Track</h3>
                 <div class="flex flex-col gap-4">
                     <input type="text" id="trackId" placeholder="2plbrEY59IikOBgBGLjaoe" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
                     <button onclick="openEndpoint('track')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Track Info</button>
@@ -51,7 +51,7 @@
             </div>
             
             <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-6 text-spotify-dark">Album Info</h3>
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Album</h3>
                 <div class="flex flex-col gap-4">
                     <input type="text" id="albumId" placeholder="4VZ7jhV0wHpoNPCB7Vmiml" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
                     <button onclick="openEndpoint('album')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Album Info</button>
@@ -59,7 +59,7 @@
             </div>
 
             <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-6 text-spotify-dark">Playlist Info</h3>
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Playlist</h3>
                 <div class="flex flex-col gap-4">
                     <input type="text" id="playlistId" placeholder="37i9dQZEVXbNG2KDcFcKOF" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
                     <button onclick="openEndpoint('playlist')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Playlist Info</button>
@@ -67,7 +67,7 @@
             </div>
 
             <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-6 text-spotify-dark">Artist Info</h3>
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Artist</h3>
                 <div class="flex flex-col gap-4">
                     <input type="text" id="artistId" placeholder="0du5cEVh5yTK9QJze8zA0C" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
                     <button onclick="openEndpoint('artist')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Artist Info</button>
@@ -75,7 +75,7 @@
             </div>
             
             <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-6 text-spotify-dark">Podcast Info</h3>
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Podcast</h3>
                 <div class="flex flex-col gap-4">
                     <input type="text" id="podcastId" placeholder="6EmSBAixLaU1CwSu6gyujz" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
                     <button onclick="openEndpoint('podcast')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Podcast Info</button>
@@ -83,7 +83,7 @@
             </div>
 
             <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-6 text-spotify-dark">Episode Info</h3>
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Episode</h3>
                 <div class="flex flex-col gap-4">
                     <input type="text" id="episodeId" placeholder="5CZlLoGOibAGX9oLh26YEk" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
                     <button onclick="openEndpoint('episode')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Episode Info</button>
