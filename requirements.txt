@@ -3,3 +3,4 @@ Flask-Cors==5.0.0
 pymongo==4.10.1
 redis==5.2.1
 websockets==14.1
+typing-extensions==4.12.2
