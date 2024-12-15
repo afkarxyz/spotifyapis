@@ -6,3 +6,7 @@ websockets==14.1
 typing-extensions==4.12.2
 requests==2.32.3
 tls-client==1.0.1
+colorama==0.4.6
+pillow==11.0.0
+readerwriterlock==1.0.9
+validators==0.34.0
