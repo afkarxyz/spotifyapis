@@ -1,8 +1,5 @@
 Flask==3.1.0
 Flask-Cors==5.0.0
-cachetools==5.5.0
-spotapi==1.1.1
 pymongo==4.10.1
 redis==5.2.1
 websockets==14.1
-yt-dlp[default]==2024.12.6
