@@ -5,3 +5,4 @@ redis==5.2.1
 websockets==14.1
 typing-extensions==4.12.2
 requests==2.32.3
+tls-client==1.0.1
