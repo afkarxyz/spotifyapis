@@ -4,3 +4,4 @@ pymongo==4.10.1
 redis==5.2.1
 websockets==14.1
 typing-extensions==4.12.2
+requests==2.32.3
