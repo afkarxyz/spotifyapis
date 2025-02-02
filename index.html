@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify API Explorer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        spotify: {
+                            green: '#1DB954',
+                            dark: '#222F3E',
+                            darkGreen: '#1AA34A',
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans font-light">
+    <div class="container mx-auto px-4 py-12 max-w-7xl">
+        <div class="flex items-center justify-center mb-12">
+            <svg class="w-12 h-12 mr-3 md:w-16 md:h-16 md:mr-4" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+                <g id="SVGRepo_iconCarrier">
+                    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g id="Color-" transform="translate(-200.000000, -460.000000)" fill="#1DB954">
+                            <path d="M238.16,481.36 C230.48,476.8 217.64,476.32 210.32,478.6 C209.12,478.96 207.92,478.24 207.56,477.16 C207.2,475.96 207.92,474.76 209,474.4 C217.52,471.88 231.56,472.36 240.44,477.64 C241.52,478.24 241.88,479.68 241.28,480.76 C240.68,481.6 239.24,481.96 238.16,481.36 M237.92,488.08 C237.32,488.92 236.24,489.28 235.4,488.68 C228.92,484.72 219.08,483.52 211.52,485.92 C210.56,486.16 209.48,485.68 209.24,484.72 C209,483.76 209.48,482.68 210.44,482.44 C219.2,479.8 230,481.12 237.44,485.68 C238.16,486.04 238.52,487.24 237.92,488.08 M235.04,494.68 C234.56,495.4 233.72,495.64 233,495.16 C227.36,491.68 220.28,490.96 211.88,492.88 C211.04,493.12 210.32,492.52 210.08,491.8 C209.84,490.96 210.44,490.24 211.16,490 C220.28,487.96 228.2,488.8 234.44,492.64 C235.28,493 235.4,493.96 235.04,494.68 M224,460 C210.8,460 200,470.8 200,484 C200,497.2 210.8,508 224,508 C237.2,508 248,497.2 248,484 C248,470.8 237.32,460 224,460" id="Spotify">
+                            </path>
+                        </g>
+                    </g>
+                </g>
+            </svg>
+            <h1 class="text-3xl md:text-5xl font-semibold text-center text-spotify-dark">Spotify API</h1>
+        </div>
+
+        <div class="mb-8">
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-4 text-spotify-dark">Search</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="searchQuery" placeholder="Search query..." class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <div class="flex gap-4">
+                        <select id="searchType" class="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                            <option value="track">Track</option>
+                            <option value="artist">Artist</option>
+                            <option value="album">Album</option>
+                            <option value="playlist">Playlist</option>
+                        </select>
+                        <button onclick="search()" class="flex-1 bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Track</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="trackId" placeholder="2plbrEY59IikOBgBGLjaoe" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <button onclick="openEndpoint('track')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Track Info</button>
+                </div>
+            </div>
+            
+            <!-- Album -->
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Album</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="albumId" placeholder="4VZ7jhV0wHpoNPCB7Vmiml" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openEndpoint('album')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Info</button>
+                        <button onclick="openEndpoint('album_tracks')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Tracks</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Artist Section -->
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Artist</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="artistId" placeholder="0du5cEVh5yTK9QJze8zA0C" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openEndpoint('artist')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Info</button>
+                        <button onclick="openEndpoint('artist_albums')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Albums</button>
+                        <button onclick="openEndpoint('artist_top_tracks')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Top Tracks</button>
+                        <button onclick="openEndpoint('artist_related')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Related</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playlist Section -->
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Playlist</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="playlistId" placeholder="37i9dQZEVXbNG2KDcFcKOF" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openEndpoint('playlist')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Info</button>
+                        <button onclick="openEndpoint('playlist_tracks')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Tracks</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shows (Podcast) Section -->
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Shows</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="showId" placeholder="6EmSBAixLaU1CwSu6gyujz" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openEndpoint('show')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Info</button>
+                        <button onclick="openEndpoint('show_episodes')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Episodes</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Episodes Section -->
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Episode</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="episodeId" placeholder="5CZlLoGOibAGX9oLh26YEk" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <button onclick="openEndpoint('episode')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Episode Info</button>
+                </div>
+            </div>
+
+            <!-- Audiobooks Section -->
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Audiobook</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="audiobookId" placeholder="audiobook_id" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <button onclick="openEndpoint('audiobook')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Audiobook Info</button>
+                </div>
+            </div>
+
+            <!-- Chapters Section -->
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Chapter</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="chapterId" placeholder="chapter_id" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <button onclick="openEndpoint('chapter')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Chapter Info</button>
+                </div>
+            </div>
+
+            <!-- Browse Section -->
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Browse</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="openEndpoint('genres')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Genres</button>
+                    <button onclick="openEndpoint('markets')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Markets</button>
+                    <button onclick="openEndpoint('categories')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Categories</button>
+                    <button onclick="openEndpoint('featured-playlists')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Featured</button>
+                    <button onclick="openEndpoint('new-releases')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">New Releases</button>
+                </div>
+            </div>
+
+            <!-- User Profile Section -->
+            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">User Profile</h3>
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="userId" placeholder="user_id" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="openEndpoint('user_profile')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Profile</button>
+                        <button onclick="openEndpoint('user_playlists')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Playlists</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openEndpoint(type) {
+            const idMap = {
+                'track': 'trackId',
+                'album': 'albumId',
+                'album_tracks': 'albumId',
+                'artist': 'artistId',
+                'artist_albums': 'artistId',
+                'artist_top_tracks': 'artistId',
+                'artist_related': 'artistId',
+                'playlist': 'playlistId',
+                'playlist_tracks': 'playlistId',
+                'show': 'showId',
+                'show_episodes': 'showId',
+                'episode': 'episodeId',
+                'audiobook': 'audiobookId',
+                'chapter': 'chapterId',
+                'user_profile': 'userId',
+                'user_playlists': 'userId'
+            };
+
+            if (idMap[type]) {
+                const id = document.getElementById(idMap[type]).value || document.getElementById(idMap[type]).placeholder;
+                window.open(`/${type}/${id}`, '_blank');
+            } else {
+                window.open(`/browse/${type}`, '_blank');
+            }
+        }
+
+        function search() {
+            const query = document.getElementById('searchQuery').value;
+            const type = document.getElementById('searchType').value;
+            if (!query) {
+                alert('Please enter a search query');
+                return;
+            }
+            window.open(`/search?q=${encodeURIComponent(query)}&type=${type}`, '_blank');
+        }
+    </script>
+</body>
+</html>                        
