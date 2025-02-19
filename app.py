@@ -1,33 +1,8 @@
 from flask import Flask, send_file, jsonify, request
 from time import sleep
 import requests
-from random import shuffle
 
 app = Flask(__name__)
-
-def get_proxy_list():
-    base_url = "https://raw.githubusercontent.com/afkarxyz/proxies/main/"
-    proxy_types = ["http", "https", "socks4", "socks5"]
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-    }
-    
-    all_proxies = []
-    
-    for proxy_type in proxy_types:
-        try:
-            response = requests.get(f"{base_url}{proxy_type}", headers=headers)
-            if response.status_code == 200:
-                proxies = response.text.splitlines()
-                formatted_proxies = [(proxy, proxy_type) for proxy in proxies]
-                all_proxies.extend(formatted_proxies)
-        except:
-            continue
-    
-    if all_proxies:
-        shuffle(all_proxies)
-        return all_proxies
-    return None
 
 token_url = 'https://open.spotify.com/get_access_token?reason=transport&productType=web_player'
 headers = {
@@ -44,30 +19,14 @@ headers = {
 }
 
 def get_spotify_data(type, id, additional_params=None):
-    proxies = get_proxy_list()
-    if not proxies:
-        return {"error": "Failed to get proxy list"}
-    
-    # Get access token using proxies
-    token = None
-    for proxy, proxy_type in proxies:
-        try:
-            req = requests.get(
-                token_url, 
-                headers=headers, 
-                proxies={proxy_type: proxy},
-                timeout=10
-            )
-            if req.status_code == 200:
-                token = req.json()
-                break
-        except:
-            continue
-    
-    if not token:
-        return {"error": "Failed to get access token"}
+    try:
+        req = requests.get(token_url, headers=headers)
+        if req.status_code != 200:
+            return {"error": "Failed to get access token"}
+        token = req.json()
+    except Exception as e:
+        return {"error": f"Failed to get access token: {str(e)}"}
 
-    # Define API endpoints
     endpoints = {
         'track': f'https://api.spotify.com/v1/tracks/{id}',
         'album': f'https://api.spotify.com/v1/albums/{id}',
@@ -105,31 +64,25 @@ def get_spotify_data(type, id, additional_params=None):
     if additional_params:
         url += '?' + '&'.join([f'{k}={v}' for k, v in additional_params.items()])
     
-    # Try to get data using proxies
-    for proxy, proxy_type in proxies:
-        try:
-            response = requests.get(
-                url,
-                headers=headers,
-                proxies={proxy_type: proxy},
-                timeout=10
-            )
-            
-            if response.status_code == 200:
-                return response.json()
-            elif response.status_code == 429:
-                sleep(int(response.headers.get("Retry-After", 1)) + 1)
-                continue
-            elif response.status_code == 401:
-                return {"error": "Unauthorized access"}
-            elif response.status_code == 403:
-                return {"error": "Forbidden access"}
-            elif response.status_code == 404:
-                return {"error": "Resource not found"}
-        except Exception as e:
-            continue
-            
-    return {"error": "Failed to fetch data"}
+    try:
+        response = requests.get(url, headers=headers)
+        
+        if response.status_code == 200:
+            return response.json()
+        elif response.status_code == 429:
+            sleep(int(response.headers.get("Retry-After", 1)) + 1)
+            response = requests.get(url, headers=headers)
+            return response.json() if response.status_code == 200 else {"error": "Rate limit exceeded"}
+        elif response.status_code == 401:
+            return {"error": "Unauthorized access"}
+        elif response.status_code == 403:
+            return {"error": "Forbidden access"}
+        elif response.status_code == 404:
+            return {"error": "Resource not found"}
+        else:
+            return {"error": f"Request failed with status code: {response.status_code}"}
+    except Exception as e:
+        return {"error": f"Failed to fetch data: {str(e)}"}
 
 @app.route('/')
 def index():
