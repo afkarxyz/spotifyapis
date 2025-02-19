@@ -9,7 +9,6 @@ A Flask web application that provides seamless access to Spotify's Web API endpo
 - Access to all major Spotify Web API endpoints
 - Automatic proxy rotation for reliable access
 - Built-in rate limiting handling
-- Support for multiple proxy types (HTTP, HTTPS, SOCKS4, SOCKS5)
 - Easy-to-use REST API endpoints
 - No Spotify authentication required
 
