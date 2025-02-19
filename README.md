@@ -1,4 +1,4 @@
-# Spotify API Explorer
+# Spotify API
 
 A Flask web application that provides seamless access to Spotify's Web API endpoints. This wrapper allows you to fetch Spotify data without requiring user authentication, making it ideal for data collection and analysis projects.
 
