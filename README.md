@@ -12,7 +12,7 @@ A Flask web application that provides seamless access to Spotify's Web API endpo
 - Easy-to-use REST API endpoints
 - No Spotify authentication required
 
-## 🌐 Vercel Deployment
+## <img src="https://vercel.com/vc-ap-vercel-marketing/_next/static/media/vercel-logotype-dark.01246f11.svg" width="96" alt="Vercel"> Deployment
 
 Click the button below!
 
