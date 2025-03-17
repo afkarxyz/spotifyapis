@@ -1,10 +1,39 @@
 from flask import Flask, send_file, jsonify, request
 from time import sleep
 import requests
+import hmac
+import time
+import hashlib
+from typing import Tuple, Callable
 
 app = Flask(__name__)
 
-token_url = 'https://open.spotify.com/get_access_token?reason=transport&productType=web_player'
+_TOTP_SECRET = bytearray([53,53,48,55,49,52,53,56,53,51,52,56,55,52,57,57,53,57,50,50,52,56,54,51,48,51,50,57,51,52,55])
+
+def generate_totp(
+    secret: bytes = _TOTP_SECRET,
+    algorithm: Callable[[], object] = hashlib.sha1,
+    digits: int = 6,
+    counter_factory: Callable[[], int] = lambda: int(time.time()) // 30,
+) -> Tuple[str, int]:
+    counter = counter_factory()
+    hmac_result = hmac.new(
+        secret, counter.to_bytes(8, byteorder="big"), algorithm
+    ).digest()
+
+    offset = hmac_result[-1] & 15
+    truncated_value = (
+        (hmac_result[offset] & 127) << 24
+        | (hmac_result[offset + 1] & 255) << 16
+        | (hmac_result[offset + 2] & 255) << 8
+        | (hmac_result[offset + 3] & 255)
+    )
+    return (
+        str(truncated_value % (10**digits)).zfill(digits),
+        counter * 30_000,
+    )
+
+token_url = 'https://open.spotify.com/get_access_token'
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
     'Accept': 'application/json',
@@ -20,9 +49,19 @@ headers = {
 
 def get_spotify_data(type, id, additional_params=None):
     try:
-        req = requests.get(token_url, headers=headers)
+        totp, timestamp = generate_totp()
+        
+        params = {
+            "reason": "transport",
+            "productType": "web-player",
+            "totp": totp,
+            "totpVer": 5,
+            "ts": timestamp,
+        }
+        
+        req = requests.get(token_url, headers=headers, params=params)
         if req.status_code != 200:
-            return {"error": "Failed to get access token"}
+            return {"error": f"Failed to get access token. Status code: {req.status_code}"}
         token = req.json()
     except Exception as e:
         return {"error": f"Failed to get access token: {str(e)}"}
