@@ -33,7 +33,7 @@ def generate_totp(
         counter * 30_000,
     )
 
-token_url = 'https://open.spotify.com/get_access_token'
+token_url = 'https://open.spotify.com/api/token'
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
     'Accept': 'application/json',
