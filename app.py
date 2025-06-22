@@ -64,8 +64,7 @@ def get_spotify_data(type, id, additional_params=None):
             return {"error": f"Failed to get access token. Status code: {req.status_code}"}
         token = req.json()
     except Exception as e:
-        return {"error": f"Failed to get access token: {str(e)}"}
-
+        return {"error": f"Failed to get access token: {str(e)}"}    
     endpoints = {
         'track': f'https://api.spotify.com/v1/tracks/{id}',
         'album': f'https://api.spotify.com/v1/albums/{id}',
@@ -78,20 +77,7 @@ def get_spotify_data(type, id, additional_params=None):
         'playlist_tracks': f'https://api.spotify.com/v1/playlists/{id}/tracks',
         'show': f'https://api.spotify.com/v1/shows/{id}',
         'show_episodes': f'https://api.spotify.com/v1/shows/{id}/episodes',
-        'episode': f'https://api.spotify.com/v1/episodes/{id}',
-        'audiobook': f'https://api.spotify.com/v1/audiobooks/{id}',
-        'chapter': f'https://api.spotify.com/v1/chapters/{id}',
-        'genre': 'https://api.spotify.com/v1/recommendations/available-genre-seeds',
-        'markets': 'https://api.spotify.com/v1/markets',
-        'categories': 'https://api.spotify.com/v1/browse/categories',
-        'category_playlists': f'https://api.spotify.com/v1/browse/categories/{id}/playlists',
-        'featured_playlists': 'https://api.spotify.com/v1/browse/featured-playlists',
-        'new_releases': 'https://api.spotify.com/v1/browse/new-releases',
-        'recommendations': 'https://api.spotify.com/v1/recommendations',
-        'search': 'https://api.spotify.com/v1/search',
-        'user_profile': f'https://api.spotify.com/v1/users/{id}',
-        'user_playlists': f'https://api.spotify.com/v1/users/{id}/playlists',
-        'player': 'https://api.spotify.com/v1/me/player'
+        'episode': f'https://api.spotify.com/v1/episodes/{id}'
     }
     
     if type not in endpoints:
@@ -130,33 +116,6 @@ def index():
 @app.route('/<type>/<id>')
 def get_info(type, id):
     data = get_spotify_data(type, id)
-    return jsonify(data)
-
-@app.route('/browse/<type>')
-def browse_endpoints(type):
-    if type in ['genres', 'markets', 'categories', 'featured-playlists', 'new-releases']:
-        data = get_spotify_data(type, None)
-        return jsonify(data)
-    return jsonify({"error": "Invalid browse type"})
-
-@app.route('/search')
-def search():
-    query = request.args.get('q')
-    type = request.args.get('type', 'track,artist,album,playlist')
-    limit = request.args.get('limit', 20)
-    offset = request.args.get('offset', 0)
-    
-    if not query:
-        return jsonify({"error": "Query parameter 'q' is required"})
-    
-    params = {
-        'q': query,
-        'type': type,
-        'limit': limit,
-        'offset': offset
-    }
-    
-    data = get_spotify_data('search', None, additional_params=params)
     return jsonify(data)
 
 if __name__ == '__main__':

@@ -1,215 +1,948 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify API</title>
-    <link rel="icon" type="image/x-icon" href="https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify API Explorer</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        spotify: {
-                            green: '#1DB954',
-                            dark: '#222F3E',
-                            darkGreen: '#1AA34A',
-                        },
-                    },
-                },
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Space Grotesk", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
             },
-        }
+            colors: {
+              spotify: {
+                green: "#1DB954",
+                dark: "#191414",
+                darkGreen: "#1AA34A",
+                gray: "#535353",
+              },
+              code: {
+                bg: "#2D3748",
+                string: "#68D391",
+                number: "#F687B3",
+                key: "#63B3ED",
+                null: "#A0AEC0",
+                boolean: "#F6AD55",
+              },
+              dark: {
+                bg: "#0B0F19",
+                surface: "#161B22",
+                border: "#21262D",
+                text: "#E6EDF3",
+                muted: "#7D8590",
+              },
+            },
+            animation: {
+              "fade-in": "fadeIn 0.5s ease-in-out",
+              "slide-up": "slideUp 0.3s ease-out",
+              "bounce-subtle": "bounceSubtle 0.6s ease-in-out",
+              glow: "glow 2s ease-in-out infinite alternate",
+            },
+            keyframes: {
+              fadeIn: {
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+              slideUp: {
+                "0%": { transform: "translateY(20px)", opacity: "0" },
+                "100%": { transform: "translateY(0)", opacity: "1" },
+              },
+              bounceSubtle: {
+                "0%, 100%": { transform: "translateY(-5%)" },
+                "50%": { transform: "translateY(0)" },
+              },
+              glow: {
+                "0%": { boxShadow: "0 0 20px rgba(29, 185, 84, 0.3)" },
+                "100%": { boxShadow: "0 0 30px rgba(29, 185, 84, 0.6)" },
+              },
+            },
+            backgroundImage: {
+              "gradient-spotify":
+                "linear-gradient(135deg, #1DB954 0%, #1AA34A 100%)",
+              "gradient-dark":
+                "linear-gradient(135deg, #0B0F19 0%, #161B22 100%)",
+            },
+          },
+        },
+      };
     </script>
-</head>
-<body class="bg-gray-50 font-sans font-light">
-    <div class="container mx-auto px-4 py-12 max-w-7xl">
-        <div class="flex items-center justify-center mb-12">
-            <svg class="w-12 h-12 mr-3 md:w-16 md:h-16 md:mr-4" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
-                <g id="SVGRepo_iconCarrier">
-                    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                        <g id="Color-" transform="translate(-200.000000, -460.000000)" fill="#1DB954">
-                            <path d="M238.16,481.36 C230.48,476.8 217.64,476.32 210.32,478.6 C209.12,478.96 207.92,478.24 207.56,477.16 C207.2,475.96 207.92,474.76 209,474.4 C217.52,471.88 231.56,472.36 240.44,477.64 C241.52,478.24 241.88,479.68 241.28,480.76 C240.68,481.6 239.24,481.96 238.16,481.36 M237.92,488.08 C237.32,488.92 236.24,489.28 235.4,488.68 C228.92,484.72 219.08,483.52 211.52,485.92 C210.56,486.16 209.48,485.68 209.24,484.72 C209,483.76 209.48,482.68 210.44,482.44 C219.2,479.8 230,481.12 237.44,485.68 C238.16,486.04 238.52,487.24 237.92,488.08 M235.04,494.68 C234.56,495.4 233.72,495.64 233,495.16 C227.36,491.68 220.28,490.96 211.88,492.88 C211.04,493.12 210.32,492.52 210.08,491.8 C209.84,490.96 210.44,490.24 211.16,490 C220.28,487.96 228.2,488.8 234.44,492.64 C235.28,493 235.4,493.96 235.04,494.68 M224,460 C210.8,460 200,470.8 200,484 C200,497.2 210.8,508 224,508 C237.2,508 248,497.2 248,484 C248,470.8 237.32,460 224,460" id="Spotify">
-                            </path>
-                        </g>
-                    </g>
-                </g>
-            </svg>
-            <h1 class="text-3xl md:text-5xl font-semibold text-center text-spotify-dark">Spotify API</h1>
+    <style>
+      /* Clean JSON viewer styles */
+      .json-viewer {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1rem;
+        overflow-x: auto;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .dark .json-viewer {
+        background: #1e1e1e;
+        border-color: #374151;
+      }
+
+      .json-collapsible {
+        cursor: pointer;
+        user-select: none;
+        display: inline-flex;
+        align-items: center;
+        background: #1db954;
+        color: white;
+        border-radius: 4px;
+        padding: 1px 4px;
+        margin-right: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        transition: all 0.15s ease;
+      }
+
+      .json-collapsible:hover {
+        background: #1aa34a;
+      }
+
+      .json-content {
+        display: inline;
+      }
+
+      .json-content.collapsed {
+        display: none;
+      }
+
+      .json-ellipsis {
+        color: #6b7280;
+        font-style: italic;
+      }
+
+      .json-key {
+        color: #1976d2;
+        font-weight: 600;
+      }
+
+      .json-string {
+        color: #388e3c;
+      }
+
+      .json-number {
+        color: #d32f2f;
+      }
+
+      .json-boolean {
+        color: #f57c00;
+        font-weight: 500;
+      }
+
+      .json-null {
+        color: #9e9e9e;
+        font-style: italic;
+      }
+
+      .json-punctuation {
+        color: #424242;
+      }
+
+      .dark .json-key {
+        color: #64b5f6;
+      }
+      .dark .json-string {
+        color: #81c784;
+      }
+      .dark .json-number {
+        color: #e57373;
+      }
+      .dark .json-boolean {
+        color: #ffb74d;
+      }
+      .dark .json-null {
+        color: #bdbdbd;
+      }
+      .dark .json-punctuation {
+        color: #e0e0e0;
+      }
+
+      /* Simple loading */
+      .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid #f3f4f6;
+        border-top: 3px solid #1db954;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Method badges */
+      .method-get {
+        background: #10b981;
+      }
+      .method-post {
+        background: #3b82f6;
+      }
+      .method-put {
+        background: #f59e0b;
+      }
+      .method-delete {
+        background: #ef4444;
+      }
+
+      /* Endpoint cards */
+      .endpoint-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .endpoint-card:hover {
+        border-color: #1db954;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .dark .endpoint-card {
+        border-color: #374151;
+        background: #1f2937;
+      }
+
+      .dark .endpoint-card:hover {
+        border-color: #1db954;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+
+      .dark ::-webkit-scrollbar-track {
+        background: #374151;
+      }
+
+      .dark ::-webkit-scrollbar-thumb {
+        background: #6b7280;
+      }
+
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200 min-h-screen"
+  >
+    <!-- Header -->
+    <header
+      class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center space-x-3">
+            <i class="fab fa-spotify text-spotify-green text-4xl"></i>
+            <div>
+              <h1 class="text-xl font-bold">Spotify API Explorer</h1>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Interactive API Documentation
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button
+              onclick="toggleTheme()"
+              class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+            >
+              <i id="theme-icon" class="fas fa-moon text-xl"></i>
+            </button>
+          </div>
         </div>
+      </div>
+    </header>
 
-        <div class="mb-8">
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-4 text-spotify-dark">Search</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="searchQuery" placeholder="Search query..." class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <div class="flex gap-4">
-                        <select id="searchType" class="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                            <option value="track">Track</option>
-                            <option value="artist">Artist</option>
-                            <option value="album">Album</option>
-                            <option value="playlist">Playlist</option>
-                        </select>
-                        <button onclick="search()" class="flex-1 bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Search</button>
-                    </div>
-                </div>
-            </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- API Explorer Tabs -->
+      <div class="mb-8">
+        <div class="border-b border-gray-200 dark:border-gray-700">
+          <nav class="-mb-px flex space-x-8">
+            <button
+              onclick="switchTab('explorer')"
+              id="explorer-tab"
+              class="border-b-2 border-spotify-green text-spotify-green py-2 px-1 text-sm font-medium"
+            >
+              API Explorer
+            </button>
+            <button
+              onclick="switchTab('response')"
+              id="response-tab"
+              class="border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-2 px-1 text-sm font-medium"
+            >
+              Response
+            </button>
+          </nav>
         </div>
-        
-        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Track</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="trackId" placeholder="2plbrEY59IikOBgBGLjaoe" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <button onclick="openEndpoint('track')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Track Info</button>
+      </div>
+      <!-- Explorer Tab -->
+      <div id="explorer-content" class="tab-content">
+        <!-- API Endpoints -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Left Column -->
+          <div class="space-y-6">
+            <!-- Tracks -->
+            <div class="endpoint-card bg-white dark:bg-gray-800 p-6">
+              <div class="flex items-center mb-4">
+                <span
+                  class="method-get text-white px-2 py-1 rounded text-xs font-bold mr-3"
+                  >GET</span
+                >
+                <h3 class="text-lg font-semibold">Tracks</h3>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Track ID</label>
+                  <input
+                    type="text"
+                    id="trackId"
+                    value="2plbrEY59IikOBgBGLjaoe"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-1 focus:ring-spotify-green focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
                 </div>
-            </div>
-            
-            <!-- Album -->
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Album</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="albumId" placeholder="4VZ7jhV0wHpoNPCB7Vmiml" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="openEndpoint('album')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Info</button>
-                        <button onclick="openEndpoint('album_tracks')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Tracks</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Artist Section -->
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Artist</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="artistId" placeholder="0du5cEVh5yTK9QJze8zA0C" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="openEndpoint('artist')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Info</button>
-                        <button onclick="openEndpoint('artist_albums')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Albums</button>
-                        <button onclick="openEndpoint('artist_top_tracks')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Top Tracks</button>
-                        <button onclick="openEndpoint('artist_related')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Related</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Playlist Section -->
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Playlist</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="playlistId" placeholder="37i9dQZEVXbNG2KDcFcKOF" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="openEndpoint('playlist')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Info</button>
-                        <button onclick="openEndpoint('playlist_tracks')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Tracks</button>
-                    </div>
-                </div>
+                <button
+                  onclick="makeRequest('track', 'trackId')"
+                  class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-4 rounded-md transition-colors"
+                >
+                  Get Track Info
+                </button>
+              </div>
             </div>
 
-            <!-- Shows (Podcast) Section -->
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Shows</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="showId" placeholder="6EmSBAixLaU1CwSu6gyujz" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="openEndpoint('show')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Info</button>
-                        <button onclick="openEndpoint('show_episodes')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Episodes</button>
-                    </div>
+            <!-- Albums -->
+            <div class="endpoint-card bg-white dark:bg-gray-800 p-6">
+              <div class="flex items-center mb-4">
+                <span
+                  class="method-get text-white px-2 py-1 rounded text-xs font-bold mr-3"
+                  >GET</span
+                >
+                <h3 class="text-lg font-semibold">Albums</h3>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Album ID</label>
+                  <input
+                    type="text"
+                    id="albumId"
+                    value="4VZ7jhV0wHpoNPCB7Vmiml"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-1 focus:ring-spotify-green focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
                 </div>
-            </div>
-
-            <!-- Episodes Section -->
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Episode</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="episodeId" placeholder="5CZlLoGOibAGX9oLh26YEk" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <button onclick="openEndpoint('episode')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Episode Info</button>
-                </div>
-            </div>
-
-            <!-- Audiobooks Section -->
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Audiobook</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="audiobookId" placeholder="audiobook_id" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <button onclick="openEndpoint('audiobook')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Audiobook Info</button>
-                </div>
-            </div>
-
-            <!-- Chapters Section -->
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Chapter</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="chapterId" placeholder="chapter_id" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <button onclick="openEndpoint('chapter')" class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Get Chapter Info</button>
-                </div>
-            </div>
-
-            <!-- Browse Section -->
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">Browse</h3>
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="openEndpoint('genres')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Genres</button>
-                    <button onclick="openEndpoint('markets')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Markets</button>
-                    <button onclick="openEndpoint('categories')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Categories</button>
-                    <button onclick="openEndpoint('featured-playlists')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Featured</button>
-                    <button onclick="openEndpoint('new-releases')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">New Releases</button>
+                  <button
+                    onclick="makeRequest('album', 'albumId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Album Info
+                  </button>
+                  <button
+                    onclick="makeRequest('album_tracks', 'albumId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Tracks
+                  </button>
                 </div>
+              </div>
             </div>
 
-            <!-- User Profile Section -->
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-                <h3 class="text-2xl font-normal mb-2 text-spotify-dark">User Profile</h3>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="userId" placeholder="user_id" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green focus:border-transparent text-sm">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="openEndpoint('user_profile')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Profile</button>
-                        <button onclick="openEndpoint('user_playlists')" class="bg-spotify-green hover:bg-spotify-darkGreen text-white font-normal py-3 px-6 rounded-lg transition duration-300 text-sm uppercase tracking-wide">Playlists</button>
-                    </div>
+            <!-- Artists -->
+            <div class="endpoint-card bg-white dark:bg-gray-800 p-6">
+              <div class="flex items-center mb-4">
+                <span
+                  class="method-get text-white px-2 py-1 rounded text-xs font-bold mr-3"
+                  >GET</span
+                >
+                <h3 class="text-lg font-semibold">Artists</h3>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Artist ID</label
+                  >
+                  <input
+                    type="text"
+                    id="artistId"
+                    value="0du5cEVh5yTK9QJze8zA0C"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-1 focus:ring-spotify-green focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
                 </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    onclick="makeRequest('artist', 'artistId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Info
+                  </button>
+                  <button
+                    onclick="makeRequest('artist_albums', 'artistId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Albums
+                  </button>
+                  <button
+                    onclick="makeRequest('artist_top_tracks', 'artistId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Top Tracks
+                  </button>
+                  <button
+                    onclick="makeRequest('artist_related', 'artistId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Related
+                  </button>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="space-y-6">
+            <!-- Playlists -->
+            <div class="endpoint-card bg-white dark:bg-gray-800 p-6">
+              <div class="flex items-center mb-4">
+                <span
+                  class="method-get text-white px-2 py-1 rounded text-xs font-bold mr-3"
+                  >GET</span
+                >
+                <h3 class="text-lg font-semibold">Playlists</h3>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Playlist ID</label
+                  >
+                  <input
+                    type="text"
+                    id="playlistId"
+                    value="37i9dQZEVXbNG2KDcFcKOF"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-1 focus:ring-spotify-green focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    onclick="makeRequest('playlist', 'playlistId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Info
+                  </button>
+                  <button
+                    onclick="makeRequest('playlist_tracks', 'playlistId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Tracks
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Podcasts -->
+            <div class="endpoint-card bg-white dark:bg-gray-800 p-6">
+              <div class="flex items-center mb-4">
+                <span
+                  class="method-get text-white px-2 py-1 rounded text-xs font-bold mr-3"
+                  >GET</span
+                >
+                <h3 class="text-lg font-semibold">Podcasts</h3>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Show ID</label>
+                  <input
+                    type="text"
+                    id="showId"
+                    value="6EmSBAixLaU1CwSu6gyujz"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-1 focus:ring-spotify-green focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    onclick="makeRequest('show', 'showId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Show Info
+                  </button>
+                  <button
+                    onclick="makeRequest('show_episodes', 'showId')"
+                    class="bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                  >
+                    Episodes
+                  </button>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Episode ID</label
+                  >
+                  <input
+                    type="text"
+                    id="episodeId"
+                    value="5CZlLoGOibAGX9oLh26YEk"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-1 focus:ring-spotify-green focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+                <button
+                  onclick="makeRequest('episode', 'episodeId')"
+                  class="w-full bg-spotify-green hover:bg-spotify-darkGreen text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                >
+                  Episode Info
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Response Tab -->
+      <div id="response-content" class="tab-content hidden">
+        <div
+          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+        >
+          <!-- Response Header -->
+          <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0"
+            >
+              <div>
+                <h2 class="text-lg font-semibold">API Response</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  JSON response from Spotify API
+                </p>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <div id="response-status" class="hidden">
+                  <span
+                    class="px-3 py-1 text-sm font-medium rounded-full"
+                  ></span>
+                </div>
+                <div
+                  id="response-time"
+                  class="hidden text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded font-mono"
+                >
+                  <i class="fas fa-clock mr-1"></i>
+                  <span></span>
+                </div>
+                <button
+                  onclick="copyResponse()"
+                  id="copy-btn"
+                  class="hidden px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded transition-colors"
+                >
+                  <i class="fas fa-copy mr-1"></i>
+                  Copy
+                </button>
+              </div>
+            </div>
+            <div
+              id="response-url"
+              class="mt-3 text-sm text-gray-500 dark:text-gray-400 font-mono bg-gray-50 dark:bg-gray-900 px-3 py-2 rounded hidden overflow-x-auto"
+            >
+              <i class="fas fa-link mr-2"></i>
+              <span></span>
+            </div>
+          </div>
+
+          <!-- Response Body -->
+          <div class="p-6">
+            <!-- Loading State -->
+            <div
+              id="loading"
+              class="hidden flex items-center justify-center py-12"
+            >
+              <div class="loading-spinner"></div>
+              <span class="ml-3 text-gray-600 dark:text-gray-400"
+                >Loading...</span
+              >
+            </div>
+
+            <!-- No Response State -->
+            <div id="no-response" class="text-center py-12">
+              <div
+                class="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4"
+              >
+                <i class="fas fa-code text-2xl text-gray-400"></i>
+              </div>
+              <h3
+                class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2"
+              >
+                No Response Yet
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 max-w-sm mx-auto">
+                Make an API request from the Explorer tab to see the JSON
+                response here.
+              </p>
+              <button
+                onclick="switchTab('explorer')"
+                class="mt-4 bg-spotify-green hover:bg-spotify-darkGreen text-white font-medium py-2 px-4 rounded transition-colors"
+              >
+                Go to Explorer
+              </button>
+            </div>
+
+            <!-- JSON Response -->
+            <div id="response-json" class="json-viewer hidden"></div>
+          </div>
+        </div>
+      </div>
     </div>
-
     <script>
-        function openEndpoint(type) {
-            const idMap = {
-                'track': 'trackId',
-                'album': 'albumId',
-                'album_tracks': 'albumId',
-                'artist': 'artistId',
-                'artist_albums': 'artistId',
-                'artist_top_tracks': 'artistId',
-                'artist_related': 'artistId',
-                'playlist': 'playlistId',
-                'playlist_tracks': 'playlistId',
-                'show': 'showId',
-                'show_episodes': 'showId',
-                'episode': 'episodeId',
-                'audiobook': 'audiobookId',
-                'chapter': 'chapterId',
-                'user_profile': 'userId',
-                'user_playlists': 'userId'
-            };
+      let currentResponse = null;
+      let darkMode = localStorage.getItem("darkMode") === "true";
+      function initTheme() {
+        if (darkMode) {
+          document.documentElement.classList.add("dark");
+          document.getElementById("theme-icon").className =
+            "fas fa-sun text-xl";
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.getElementById("theme-icon").className =
+            "fas fa-moon text-xl";
+        }
+      }
 
-            if (idMap[type]) {
-                const id = document.getElementById(idMap[type]).value || document.getElementById(idMap[type]).placeholder;
-                window.open(`/${type}/${id}`, '_blank');
+      function toggleTheme() {
+        darkMode = !darkMode;
+        localStorage.setItem("darkMode", darkMode);
+        initTheme();
+      }
+
+      document.addEventListener("DOMContentLoaded", initTheme);
+
+      function switchTab(tab) {
+        const explorerTab = document.getElementById("explorer-tab");
+        const responseTab = document.getElementById("response-tab");
+
+        if (tab === "explorer") {
+          explorerTab.className =
+            "border-b-2 border-spotify-green text-spotify-green py-2 px-1 text-sm font-medium";
+          responseTab.className =
+            "border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-2 px-1 text-sm font-medium";
+        } else {
+          responseTab.className =
+            "border-b-2 border-spotify-green text-spotify-green py-2 px-1 text-sm font-medium";
+          explorerTab.className =
+            "border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-2 px-1 text-sm font-medium";
+        }
+
+        const explorerContent = document.getElementById("explorer-content");
+        const responseContent = document.getElementById("response-content");
+
+        if (tab === "explorer") {
+          explorerContent.className = "tab-content";
+          responseContent.className = "tab-content hidden";
+        } else {
+          responseContent.className = "tab-content";
+          explorerContent.className = "tab-content hidden";
+        }
+      }
+
+      function formatJson(obj) {
+        let collapsibleId = 0;
+
+        function formatValue(value, depth = 0) {
+          const indent = "&nbsp;&nbsp;".repeat(depth);
+
+          if (value === null) {
+            return '<span class="json-null">null</span>';
+          }
+
+          if (typeof value === "boolean") {
+            return `<span class="json-boolean">${value}</span>`;
+          }
+
+          if (typeof value === "number") {
+            return `<span class="json-number">${value}</span>`;
+          }
+
+          if (typeof value === "string") {
+            return `<span class="json-string">"${value.replace(
+              /"/g,
+              '\\"'
+            )}"</span>`;
+          }
+
+          if (Array.isArray(value)) {
+            if (value.length === 0) {
+              return '<span class="json-punctuation">[]</span>';
+            }
+
+            const currentId = ++collapsibleId;
+            const preview =
+              value.length === 1 ? "1 item" : `${value.length} items`;
+
+            let result = `<span class="json-punctuation">[</span>`;
+
+            if (value.length > 3) {
+              result += `<span class="json-collapsible" onclick="toggleCollapse(${currentId})">[-]</span>`;
+              result += `<span class="json-content collapsed" id="collapsed-${currentId}"><span class="json-ellipsis">... ${preview} ...</span></span>`;
+              result += `<span class="json-content" id="expanded-${currentId}"><br>`;
             } else {
-                window.open(`/browse/${type}`, '_blank');
+              result += `<br>`;
             }
+
+            value.forEach((item, index) => {
+              if (value.length <= 3) {
+                result += `${indent}&nbsp;&nbsp;${formatValue(
+                  item,
+                  depth + 1
+                )}`;
+              } else {
+                result += `<span id="expanded-${currentId}">${indent}&nbsp;&nbsp;${formatValue(
+                  item,
+                  depth + 1
+                )}</span>`;
+              }
+              if (index < value.length - 1) {
+                result += '<span class="json-punctuation">,</span>';
+              }
+              result += "<br>";
+            });
+
+            if (value.length > 3) {
+              result += `</span>`;
+            }
+
+            result += `${indent}<span class="json-punctuation">]</span>`;
+            return result;
+          }
+
+          if (typeof value === "object") {
+            const keys = Object.keys(value);
+            if (keys.length === 0) {
+              return '<span class="json-punctuation">{}</span>';
+            }
+
+            const currentId = ++collapsibleId;
+            const preview =
+              keys.length === 1 ? "1 property" : `${keys.length} properties`;
+
+            let result = `<span class="json-punctuation">{</span>`;
+
+            if (keys.length > 5) {
+              result += `<span class="json-collapsible" onclick="toggleCollapse(${currentId})">[-]</span>`;
+              result += `<span class="json-content collapsed" id="collapsed-${currentId}"><span class="json-ellipsis">... ${preview} ...</span></span>`;
+              result += `<span class="json-content" id="expanded-${currentId}"><br>`;
+            } else {
+              result += `<br>`;
+            }
+
+            keys.forEach((key, index) => {
+              if (keys.length <= 5) {
+                result += `${indent}&nbsp;&nbsp;<span class="json-key">"${key}"</span><span class="json-punctuation">:</span> ${formatValue(
+                  value[key],
+                  depth + 1
+                )}`;
+              } else {
+                result += `<span id="expanded-${currentId}">${indent}&nbsp;&nbsp;<span class="json-key">"${key}"</span><span class="json-punctuation">:</span> ${formatValue(
+                  value[key],
+                  depth + 1
+                )}</span>`;
+              }
+              if (index < keys.length - 1) {
+                result += '<span class="json-punctuation">,</span>';
+              }
+              result += "<br>";
+            });
+
+            if (keys.length > 5) {
+              result += `</span>`;
+            }
+
+            result += `${indent}<span class="json-punctuation">}</span>`;
+            return result;
+          }
+
+          return String(value);
         }
 
-        function search() {
-            const query = document.getElementById('searchQuery').value;
-            const type = document.getElementById('searchType').value;
-            if (!query) {
-                alert('Please enter a search query');
-                return;
-            }
-            window.open(`/search?q=${encodeURIComponent(query)}&type=${type}`, '_blank');
+        return formatValue(obj);
+      }
+
+      function toggleCollapse(id) {
+        const collapsed = document.getElementById(`collapsed-${id}`);
+        const expanded = document.getElementById(`expanded-${id}`);
+        const button = event.target;
+
+        if (collapsed && expanded) {
+          if (collapsed.classList.contains("collapsed")) {
+            collapsed.classList.remove("collapsed");
+            expanded.classList.add("collapsed");
+            button.textContent = "[+]";
+          } else {
+            collapsed.classList.add("collapsed");
+            expanded.classList.remove("collapsed");
+            button.textContent = "[-]";
+          }
         }
+      }
+
+      function showLoading() {
+        document.getElementById("loading").classList.remove("hidden");
+        document.getElementById("no-response").classList.add("hidden");
+        document.getElementById("response-json").classList.add("hidden");
+        document.getElementById("response-status").classList.add("hidden");
+        document.getElementById("response-time").classList.add("hidden");
+        document.getElementById("copy-btn").classList.add("hidden");
+        document.getElementById("response-url").classList.add("hidden");
+      }
+
+      function showResponse(data, url, status = 200, responseTime = null) {
+        currentResponse = data;
+
+        document.getElementById("loading").classList.add("hidden");
+        document.getElementById("no-response").classList.add("hidden");
+        document.getElementById("response-json").classList.remove("hidden");
+        document.getElementById("response-status").classList.remove("hidden");
+        document.getElementById("copy-btn").classList.remove("hidden");
+        document.getElementById("response-url").classList.remove("hidden");
+
+        if (responseTime) {
+          document.getElementById("response-time").classList.remove("hidden");
+          document
+            .getElementById("response-time")
+            .querySelector("span").textContent = `${responseTime}ms`;
+        }
+
+        document.getElementById("response-json").innerHTML = formatJson(data);
+
+        document
+          .getElementById("response-url")
+          .querySelector("span").textContent = url;
+
+        const statusEl = document
+          .getElementById("response-status")
+          .querySelector("span");
+        if (status === 200) {
+          statusEl.className =
+            "px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+          statusEl.innerHTML = '<i class="fas fa-check-circle mr-1"></i>200 OK';
+        } else {
+          statusEl.className =
+            "px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+          statusEl.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i>${status} Error`;
+        }
+
+        switchTab("response");
+      }
+
+      function makeRequest(endpoint, inputId = null) {
+        showLoading();
+        const startTime = performance.now();
+
+        let url;
+        if (inputId) {
+          const id =
+            document.getElementById(inputId).value ||
+            document
+              .getElementById(inputId)
+              .placeholder.split("(e.g., ")[1]
+              ?.split(")")[0];
+          if (!id) {
+            alert("Please enter an ID");
+            document.getElementById("loading").classList.add("hidden");
+            document.getElementById("no-response").classList.remove("hidden");
+            return;
+          }
+          url = `/${endpoint}/${id}`;
+        } else {
+          url = `/browse/${endpoint}`;
+        }
+
+        fetch(url)
+          .then((response) => {
+            const endTime = performance.now();
+            const responseTime = Math.round(endTime - startTime);
+            const status = response.status;
+            return response
+              .json()
+              .then((data) => ({ data, status, responseTime }));
+          })
+          .then(({ data, status, responseTime }) => {
+            showResponse(data, url, status, responseTime);
+          })
+          .catch((error) => {
+            const endTime = performance.now();
+            const responseTime = Math.round(endTime - startTime);
+            showResponse({ error: error.message }, url, 500, responseTime);
+          });
+      }
+
+      function copyResponse() {
+        if (currentResponse) {
+          navigator.clipboard
+            .writeText(JSON.stringify(currentResponse, null, 2))
+            .then(() => {
+              const btn = document.getElementById("copy-btn");
+              const originalText = btn.innerHTML;
+              btn.innerHTML = '<i class="fas fa-check mr-1"></i>Copied!';
+              btn.className =
+                "px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-sm font-medium rounded transition-colors";
+              setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.className =
+                  "px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded transition-colors";
+              }, 2000);
+            })
+            .catch((err) => {
+              console.error("Failed to copy: ", err);
+            });
+        }
+      }
+
+      document.querySelectorAll('input[type="text"]').forEach((input) => {
+        input.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            const card = this.closest(".endpoint-card");
+            const button = card.querySelector('button[onclick^="makeRequest"]');
+            if (button) {
+              button.click();
+            }
+          }
+        });
+      });
     </script>
-</body>
-</html>                        
+  </body>
+</html>
