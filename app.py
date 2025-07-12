@@ -4,6 +4,7 @@ import requests
 import time
 import pyotp
 import base64
+import json
 from random import randrange
 
 app = Flask(__name__)
@@ -13,7 +14,20 @@ def get_random_user_agent():
     return f"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_{randrange(11, 15)}_{randrange(4, 9)}) AppleWebKit/{randrange(530, 537)}.{randrange(30, 37)} (KHTML, like Gecko) Chrome/{randrange(80, 105)}.0.{randrange(3000, 4500)}.{randrange(60, 125)} Safari/{randrange(530, 537)}.{randrange(30, 36)}"
 
 def generate_totp():
-    secret_cipher = [61, 110, 58, 98, 35, 79, 117, 69, 102, 72, 92, 102, 69, 93, 41, 101, 42, 75]
+    url = "https://raw.githubusercontent.com/Thereallo1026/spotify-secrets/refs/heads/main/secrets/secretBytes.json"
+    
+    try:
+        resp = requests.get(url, timeout=10)
+        if resp.status_code != 200:
+            raise Exception(f"Failed to fetch TOTP secrets from GitHub. Status: {resp.status_code}")
+        secrets_list = resp.json()
+        
+        latest_entry = max(secrets_list, key=lambda x: x["version"])
+        version = latest_entry["version"]
+        secret_cipher = latest_entry["secret"]
+    except Exception as e:
+        raise Exception(f"Failed to fetch secrets from GitHub: {str(e)}")
+
     processed = [byte ^ ((i % 33) + 9) for i, byte in enumerate(secret_cipher)]
     processed_str = "".join(map(str, processed))
     utf8_bytes = processed_str.encode('utf-8')
@@ -36,7 +50,7 @@ def generate_totp():
         server_time = data.get("serverTime")
         if server_time is None:
             raise Exception("Failed to fetch server time from Spotify")
-        return totp, server_time
+        return totp, server_time, version
     except Exception as e:
         raise Exception(f"Error getting server time: {str(e)}")
 
@@ -56,7 +70,7 @@ headers = {
 
 def get_spotify_data(type, id, additional_params=None):
     try:
-        totp, server_time = generate_totp()
+        totp, server_time, totp_version = generate_totp()
         otp_code = totp.at(int(server_time))
         timestamp_ms = int(time.time() * 1000)
         
@@ -65,7 +79,7 @@ def get_spotify_data(type, id, additional_params=None):
             'productType': 'web-player',
             'totp': otp_code,
             'totpServerTime': server_time,
-            'totpVer': '8',
+            'totpVer': str(totp_version),
             'sTime': server_time,
             'cTime': timestamp_ms,
             'buildVer': 'web-player_2025-06-11_1749636522102_27bd7d1',
